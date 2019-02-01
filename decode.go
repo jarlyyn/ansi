@@ -10,6 +10,9 @@ import (
 	"strings"
 )
 
+//FlagIgnoreC1 a flag decide if ignore "C1" in decode.
+var FlagIgnoreC1 bool
+
 // An S contains a decoded escape sequence.  There are several types of
 // escape sequences:
 //
@@ -99,7 +102,7 @@ func Decode(in []byte) (out []byte, s *S, err error) {
 	// If the first byte is not an ESC or C1 code then return everything
 	// up to the first ESC or C1 code.
 	for x, c := range in {
-		if c == '\033' || (c&0xe0 == 0x80) {
+		if c == '\033' || (c&0xe0 == 0x80 && !FlagIgnoreC1) {
 			if x > 0 {
 				return in[x:], &S{Code: Name(in[:x])}, nil
 			}
